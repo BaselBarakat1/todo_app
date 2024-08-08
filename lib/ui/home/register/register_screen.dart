@@ -1,39 +1,35 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/firebase_error_codes/firebase_error_codes.dart';
+import 'package:todo_app/ui/home/login/login_screen.dart';
 import 'package:todo_app/ui/widgets/custom_text_form-field.dart';
+import 'package:todo_app/utils/dialog_utils.dart';
 import 'package:todo_app/utils/email_format.dart';
 import 'package:todo_app/utils/password_format.dart';
 
-class registerScreen extends StatelessWidget {
+class registerScreen extends StatefulWidget {
 static const String routeName = 'register_screen';
+
+  @override
+  State<registerScreen> createState() => _registerScreenState();
+}
+
+class _registerScreenState extends State<registerScreen> {
 TextEditingController fullNameController = TextEditingController();
+
 TextEditingController userNameController = TextEditingController();
+
 TextEditingController emailController = TextEditingController();
+
 TextEditingController passwordController = TextEditingController();
+
 TextEditingController passwordConfirmationController = TextEditingController();
+
 var formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    void createAccount() async {
-     if(formKey.currentState?.validate() == false){
-       return;
-     }
-     try{
-     var credintial = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-         email: emailController.text,
-         password: passwordController.text);
-     print(credintial.user?.uid);
-     } on FirebaseAuthException catch (e) {
-       if (e.code == FirebaseErrorCodes.weakPassword) {
-         print('The password provided is too weak.');
-       } else if (e.code == FirebaseErrorCodes.emailAlreadyInUse) {
-         print('The account already exists for that email.');
-       }
-     } catch (e) {
-       print(e);
-     }
-    }
+
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(image:
@@ -133,4 +129,30 @@ var formKey = GlobalKey<FormState>();
       ),
     );
   }
+
+void createAccount() async {
+  if(formKey.currentState?.validate() == false){
+    return;
+  }
+  try{
+    DialogUtils.showLoadingDialog(context, 'Loading...');
+    var credintial = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text);
+    DialogUtils.hideDialog(context);
+    DialogUtils.showMessage(context, 'Account Created Successfully',icon: Icon(Icons.check_circle,color: Colors.green ),postiveActionTitle: 'Ok',posAction: () {
+      Navigator.pushReplacementNamed(context, loginScreen.routeName);
+    },);
+  } on FirebaseAuthException catch (e) {
+    if (e.code == FirebaseErrorCodes.weakPassword) {
+      DialogUtils.showMessage(context, 'The password provided is too weak.',postiveActionTitle: 'Ok');
+     // print('The password provided is too weak.');
+    } else if (e.code == FirebaseErrorCodes.emailAlreadyInUse) {
+      DialogUtils.showMessage(context, 'The account already exists for that email.',postiveActionTitle: 'Ok');
+      //print('The account already exists for that email.');
+    }
+  } catch (e) {
+    DialogUtils.showMessage(context, 'Something went wrong.',postiveActionTitle: 'Ok');
+  }
+}
 }
