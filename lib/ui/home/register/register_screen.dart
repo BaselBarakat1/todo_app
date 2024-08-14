@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/database/model/user.dart' as MyUser;
+import 'package:todo_app/database/user_dao.dart';
 import 'package:todo_app/firebase_error_codes/firebase_error_codes.dart';
 import 'package:todo_app/ui/home/login/login_screen.dart';
 import 'package:todo_app/ui/widgets/custom_text_form-field.dart';
@@ -24,6 +26,8 @@ TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 
 TextEditingController passwordConfirmationController = TextEditingController();
+
+bool obsecureText= true;
 
 var formKey = GlobalKey<FormState>();
 
@@ -86,6 +90,17 @@ var formKey = GlobalKey<FormState>();
                 ),
                 customTextFormField(labelText: 'Password',
                 controller: passwordController,
+                  obsecureText: obsecureText,
+                suffixIcon: IconButton(onPressed: () {
+                  if(obsecureText == true){
+                    obsecureText = false;
+                  }else{
+                    obsecureText =true;
+                  }
+                  setState(() {
+
+                  });
+                }, icon: Icon(Icons.remove_red_eye_outlined)),
                 validator: (input) {
                   if(input == null || input.isEmpty){
                     return ' Please Enter Password';
@@ -97,6 +112,17 @@ var formKey = GlobalKey<FormState>();
                 },
                 ),
                 customTextFormField(labelText: 'Password Confirmation',
+                obsecureText: obsecureText,
+                suffixIcon: IconButton(onPressed: () {
+                  if(obsecureText == true){
+                    obsecureText = false;
+                  }else{
+                    obsecureText =true;
+                  }
+                  setState(() {
+
+                  });
+                }, icon: Icon(Icons.remove_red_eye_outlined)),
                 controller: passwordConfirmationController,
                 validator: (input) {
                   if(input == null || input.isEmpty){
@@ -121,7 +147,7 @@ var formKey = GlobalKey<FormState>();
 
                   ),
 
-                )
+                ),
               ],
             ),
           ),
@@ -139,6 +165,12 @@ void createAccount() async {
     var credintial = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text);
+    await UserDao.addUser(MyUser.User(
+      id: credintial.user?.uid,
+      fullName: fullNameController.text,
+      userName: userNameController.text ,
+      email: emailController.text,
+    ));
     DialogUtils.hideDialog(context);
     DialogUtils.showMessage(context, 'Account Created Successfully',icon: Icon(Icons.check_circle,color: Colors.green ),postiveActionTitle: 'Ok',posAction: () {
       Navigator.pushReplacementNamed(context, loginScreen.routeName);

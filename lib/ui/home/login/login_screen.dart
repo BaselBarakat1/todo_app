@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/database/user_dao.dart';
 import 'package:todo_app/firebase_error_codes/firebase_error_codes.dart';
 import 'package:todo_app/ui/home/home_screen.dart';
+import 'package:todo_app/ui/home/register/register_screen.dart';
 import 'package:todo_app/ui/widgets/custom_text_form-field.dart';
 import 'package:todo_app/utils/dialog_utils.dart';
 import 'package:todo_app/utils/email_format.dart';
@@ -18,6 +20,8 @@ class _loginScreenState extends State<loginScreen> {
 TextEditingController emailController = TextEditingController();
 
 TextEditingController passwordController = TextEditingController();
+
+bool obsecureText = true;
 
 var formKey = GlobalKey<FormState>();
 
@@ -62,7 +66,18 @@ var formKey = GlobalKey<FormState>();
                   },
                 ),
                 customTextFormField(labelText: 'Password',
+                suffixIcon: IconButton(onPressed: () {
+                  if(obsecureText == true){
+                    obsecureText = false;
+                  }else{
+                    obsecureText =true;
+                  }
+                  setState(() {
+
+                  });
+                }, icon: Icon(Icons.remove_red_eye_outlined)),
                 prefixIcon: Icon(Icons.password),
+                  obsecureText:obsecureText,
                 controller: passwordController,
                 validator: (input) {
                   if(input == null || input.isEmpty){
@@ -83,7 +98,10 @@ var formKey = GlobalKey<FormState>();
                     backgroundColor: Color(0xff5D9CEC),
                   ),
 
-                )
+                ),
+                TextButton(onPressed: () {
+                  Navigator.pushNamed(context, registerScreen.routeName);
+                }, child: Text("Don't have Account ?",style: TextStyle(color: Color(0xff5D9CEC),fontWeight: FontWeight.w600,),))
               ],
             ),
           ),
@@ -102,6 +120,7 @@ void login() async {
         email: emailController.text,
         password: passwordController.text
     );
+    UserDao.getUser(credential.user!.uid);
     DialogUtils.hideDialog(context);
     DialogUtils.showMessage(context, 'Logged In Successfully',
       icon: Icon(Icons.check_circle, color: Colors.green,),
