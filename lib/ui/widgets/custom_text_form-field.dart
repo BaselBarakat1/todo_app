@@ -7,8 +7,9 @@ Widget? suffixIcon;
 String labelText ;
 bool obsecureText ;
 Validator? validator;
+int? maxLines;
 TextEditingController? controller;
-customTextFormField({required this.labelText,this.validator,this.controller,this.prefixIcon,this.obsecureText = false,this.suffixIcon});
+customTextFormField({required this.labelText,this.validator,this.controller,this.prefixIcon,this.obsecureText = false,this.suffixIcon,this.maxLines});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -17,6 +18,8 @@ customTextFormField({required this.labelText,this.validator,this.controller,this
         obscureText: obsecureText,
         controller: controller ,
         validator: validator,
+        maxLines: maxLines,
+        minLines: maxLines,
         cursorColor: Color(0xff5D9CEC),
         decoration: InputDecoration(
           suffixIcon: suffixIcon ,

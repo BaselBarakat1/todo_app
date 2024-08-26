@@ -33,7 +33,7 @@ class DialogUtils {
       }, child: Text(negativeActionTitle,style: TextStyle(color: Color(0xff5D9CEC)),)));
     }
     showDialog(context: context, builder: (context) => AlertDialog(
-      content:Text(message,textAlign: TextAlign.center,style: TextStyle(fontSize: 18,fontWeight: FontWeight.w400)) ,
+      content:Text(message,textAlign: TextAlign.center,style: TextStyle(fontSize: 18,fontWeight: FontWeight.w400,color: Colors.black)) ,
       icon: icon,
       actions: actions,
     ),

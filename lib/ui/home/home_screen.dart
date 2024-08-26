@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/ui/home/add_task_bootom_sheet.dart';
 import 'package:todo_app/ui/home/settings_tab/settings_tab.dart';
 import 'package:todo_app/ui/home/tasks_list_tab/tasks_list_tab.dart';
 
@@ -26,6 +27,7 @@ List<Widget> tabs = [
             child: Text('To Do List')),
       ),
       floatingActionButton: FloatingActionButton(onPressed: () {
+       showAddTaskbottomSheet();
 
       },child: Icon(Icons.add,color: Colors.white,),
         shape: StadiumBorder(
@@ -54,5 +56,9 @@ List<Widget> tabs = [
       ),
       body: tabs[selectedIndex],
     );
+  }
+
+  void showAddTaskbottomSheet() {
+    showModalBottomSheet(context: context, builder:(context) => addTaskBottomSheet(),);
   }
 }

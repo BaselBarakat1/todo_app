@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/auth_provider/auth_provider.dart';
 import 'package:todo_app/database/model/user.dart' as MyUser;
 import 'package:todo_app/database/user_dao.dart';
 import 'package:todo_app/firebase_error_codes/firebase_error_codes.dart';
@@ -89,6 +91,7 @@ var formKey = GlobalKey<FormState>();
                   },
                 ),
                 customTextFormField(labelText: 'Password',
+                maxLines: 1,
                 controller: passwordController,
                   obsecureText: obsecureText,
                 suffixIcon: IconButton(onPressed: () {
@@ -112,6 +115,7 @@ var formKey = GlobalKey<FormState>();
                 },
                 ),
                 customTextFormField(labelText: 'Password Confirmation',
+                maxLines: 1,
                 obsecureText: obsecureText,
                 suffixIcon: IconButton(onPressed: () {
                   if(obsecureText == true){
@@ -141,11 +145,6 @@ var formKey = GlobalKey<FormState>();
                   createAccount();
                 },
                   child: Text('Create Account',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15)),
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4))),
-                    backgroundColor: Color(0xff5D9CEC),
-
-                  ),
 
                 ),
               ],
@@ -157,20 +156,13 @@ var formKey = GlobalKey<FormState>();
   }
 
 void createAccount() async {
+    var authProvider = Provider.of<MyAuthProvider>(context,listen: false);
   if(formKey.currentState?.validate() == false){
     return;
   }
   try{
     DialogUtils.showLoadingDialog(context, 'Loading...');
-    var credintial = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text);
-    await UserDao.addUser(MyUser.User(
-      id: credintial.user?.uid,
-      fullName: fullNameController.text,
-      userName: userNameController.text ,
-      email: emailController.text,
-    ));
+    authProvider.register(emailController.text, passwordController.text, fullNameController.text, userNameController.text);
     DialogUtils.hideDialog(context);
     DialogUtils.showMessage(context, 'Account Created Successfully',icon: Icon(Icons.check_circle,color: Colors.green ),postiveActionTitle: 'Ok',posAction: () {
       Navigator.pushReplacementNamed(context, loginScreen.routeName);

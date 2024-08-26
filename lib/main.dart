@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/auth_provider/auth_provider.dart';
 import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/ui/home/home_screen.dart';
 import 'package:todo_app/ui/home/login/login_screen.dart';
@@ -12,7 +14,9 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApplication());
+  runApp(ChangeNotifierProvider(
+      create: (context) => MyAuthProvider(),
+      child: MyApplication()));
 }
 
 class MyApplication extends StatelessWidget{
@@ -30,7 +34,7 @@ class MyApplication extends StatelessWidget{
       initialRoute: loginScreen.routeName,
       theme: MyThemeData.lightTheme,
       darkTheme: MyThemeData.darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
     );
   }
 

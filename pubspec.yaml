@@ -40,6 +40,9 @@ dependencies:
   cupertino_icons:
   firebase_auth:
   cloud_firestore:
+  provider: 
+  flutter_slidable:
+  easy_date_timeline:
 
 dev_dependencies:
   flutter_test:
