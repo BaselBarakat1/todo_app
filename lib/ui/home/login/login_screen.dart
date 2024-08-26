@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/auth_provider/auth_provider.dart';
 import 'package:todo_app/database/user_dao.dart';
 import 'package:todo_app/firebase_error_codes/firebase_error_codes.dart';
 import 'package:todo_app/ui/home/home_screen.dart';
@@ -77,6 +79,7 @@ var formKey = GlobalKey<FormState>();
                   });
                 }, icon: Icon(Icons.remove_red_eye_outlined)),
                 prefixIcon: Icon(Icons.password),
+                  maxLines: 1,
                   obsecureText:obsecureText,
                 controller: passwordController,
                 validator: (input) {
@@ -93,10 +96,7 @@ var formKey = GlobalKey<FormState>();
                   login();
                 },
                   child: Text('Log in',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15)),
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4))),
-                    backgroundColor: Color(0xff5D9CEC),
-                  ),
+
 
                 ),
                 TextButton(onPressed: () {
@@ -111,16 +111,13 @@ var formKey = GlobalKey<FormState>();
   }
 
 void login() async {
+    var authProvider = Provider.of<MyAuthProvider>(context,listen: false);
   if (formKey.currentState?.validate() == false) {
     return;
   }
   try {
     DialogUtils.showLoadingDialog(context, 'Loading...');
-    var credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text
-    );
-    UserDao.getUser(credential.user!.uid);
+    await authProvider.login(emailController.text, passwordController.text);
     DialogUtils.hideDialog(context);
     DialogUtils.showMessage(context, 'Logged In Successfully',
       icon: Icon(Icons.check_circle, color: Colors.green,),
